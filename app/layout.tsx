@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ConSentido - Estimulación Neurocognitiva",
+  title: "ConSentido Cognitivo - Estimulación Neurocognitiva",
   description:
     "Recursos y talleres de estimulación neurocognitiva para adultos mayores. Acompañamos el envejecimiento activo.",
 };
