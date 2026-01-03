@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   title: "ConSentido Cognitivo - Estimulación Neurocognitiva",
   description:
     "Recursos y talleres de estimulación neurocognitiva para adultos mayores. Acompañamos el envejecimiento activo.",
+  icons: {
+    icon: "/ConSentido.ico",
+  },
 };
 
 import { AuthProvider } from "@/context/AuthContext";
