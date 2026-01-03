@@ -18,19 +18,17 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="header-style sticky top-0 z-50 bg-fondo shadow-sm border-b border-anillo-claro/20">
+    <header className="header-style bg-fondo shadow-sm border-b border-anillo-claro/20">
       <nav className="container mx-auto px-4 lg:px-8 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center py-2">
           <Image
-            src="/ConSentido_Logo.jpeg"
-            alt="ConSentido Logo"
-            width={50}
-            height={50}
-            className="rounded-full"
+            src="/ConSentido-Logo.png"
+            alt="ConSentido Cognitivo Logo"
+            width={140}
+            height={53}
+            className="h-auto w-auto max-h-16 object-contain scale-125 origin-left"
+            priority
           />
-          <span className="text-title text-xl font-bold hidden sm:block">
-            ConSentido
-          </span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8">

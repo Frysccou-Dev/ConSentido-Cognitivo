@@ -1,21 +1,28 @@
+import Hero from "@/components/home/Hero";
+import Offerings from "@/components/home/Offerings";
+import Functions from "@/components/home/Functions";
+import Modalities from "@/components/home/Modalities";
+
 export default function Home() {
   return (
-    <section className="container mx-auto px-4 py-20 flex flex-col items-center justify-center text-center gap-8">
-      <h1 className="text-title max-w-4xl">
-        Acompañando el envejecimiento activo de manera profesional
-      </h1>
-      <p className="text-subtitle max-w-2xl">
-        Recursos y talleres de estimulación neurocognitiva diseñados para
-        potenciar el bienestar y la autonomía de los adultos mayores.
-      </p>
-      <div className="flex flex-wrap gap-4 justify-center mt-4">
-        <button className="bg-primario-cerebro text-fondo px-8 py-3 rounded-full font-bold hover:bg-anillo-oscuro transition-all shadow-md">
-          Ver Recursos
-        </button>
-        <button className="border-2 border-secundario-corazon text-secundario-corazon px-8 py-3 rounded-full font-bold hover:bg-secundario-corazon hover:text-fondo transition-all">
-          Conocer Talleres
-        </button>
-      </div>
-    </section>
+    <div className="flex flex-col w-full">
+      <Hero />
+      <Offerings />
+      <Functions />
+      <Modalities />
+
+      <section className="bg-primario-cerebro text-fondo py-16 px-4">
+        <div className="container mx-auto text-center flex flex-col items-center gap-6">
+          <h2 className="text-title text-fondo">¿Tenés alguna duda?</h2>
+          <p className="max-w-xl opacity-90">
+            Estamos para acompañarte. Consultanos por talleres personalizados o
+            materiales específicos según tus necesidades.
+          </p>
+          <button className="bg-secundario-corazon text-fondo px-10 py-4 rounded-full font-bold hover:scale-105 transition-transform shadow-lg mt-4">
+            Ponete en contacto
+          </button>
+        </div>
+      </section>
+    </div>
   );
 }
