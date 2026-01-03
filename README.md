@@ -1,36 +1,143 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Web de Estimulación Neurocognitiva para Adultos Mayores
 
-## Getting Started
+## 1. Objetivo del proyecto
 
-First, run the development server:
+El objetivo del sitio web es presentar y comunicar una propuesta profesional de **estimulación neurocognitiva para adultos mayores**, ofreciendo dos líneas principales de trabajo:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Recursos descargables en formato PDF.
+- Talleres de estimulación cognitiva (grupales, individuales e institucionales).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+El sitio debe ser **informativo, claro y accesible**, pensado para personas no técnicas, familias, profesionales e instituciones.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 2. Estructura general del sitio
 
-## Learn More
+### Menú principal
 
-To learn more about Next.js, take a look at the following resources:
+El sitio cuenta con las siguientes secciones públicas:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Inicio
+- Recursos
+- Talleres
+- Cómo trabajo
+- Sobre mí
+- Preguntas frecuentes
+- Contacto
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+No requiere autenticación para acceder a ninguna sección.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 3. Página de Inicio
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 3.1 Hero (sección principal)
+
+**Título principal**
+
+> Estimulación neurocognitiva para adultos mayores
+
+**Subtítulo**
+
+> Recursos y talleres pensados para acompañar el envejecimiento activo, con actividades claras, graduales y significativas.
+
+**Acciones principales (CTA)**
+
+- Ver recursos descargables
+- Conocer los talleres
+
+---
+
+### 3.2 Sección “Qué ofrezco”
+
+La página de inicio presenta dos propuestas principales claramente diferenciadas.
+
+#### Recursos descargables
+
+- Materiales en formato PDF listos para imprimir.
+- Actividades organizadas por función cognitiva.
+- Uso individual o grupal.
+- Orientado a hogar, consultorio o institución.
+
+Acción asociada: acceso a la tienda de recursos.
+
+---
+
+#### Talleres de estimulación cognitiva
+
+- Espacios guiados y acompañados.
+- Propuestas grupales o individuales.
+- Actividades adaptadas al nivel del grupo.
+- Enfoque preventivo y de acompañamiento.
+
+Acción asociada: acceso a la sección de talleres.
+
+---
+
+### 3.3 Qué son los talleres
+
+Los talleres de estimulación cognitiva son espacios de encuentro y trabajo donde, a través de actividades significativas, se estimulan funciones como la memoria, la atención, el lenguaje y las funciones ejecutivas, respetando los tiempos, intereses y trayectorias de cada persona.
+
+---
+
+### 3.4 Qué se trabaja
+
+Las funciones cognitivas abordadas en los talleres incluyen:
+
+- Memoria
+- Atención
+- Lenguaje
+- Funciones ejecutivas
+- Orientación
+- Habilidades visoespaciales y praxias
+
+---
+
+### 3.5 Modalidades de trabajo
+
+#### Taller grupal
+
+- Dirigido a adultos mayores.
+- Encuentros semanales.
+- Grupos reducidos.
+- Duración aproximada: 60 a 90 minutos.
+
+---
+
+#### Taller individual
+
+- Acompañamiento personalizado.
+- Ritmo de trabajo propio.
+- Objetivos específicos según la persona.
+
+---
+
+#### Taller institucional
+
+- Propuestas para centros de día.
+- Hogares.
+- Espacios comunitarios.
+
+---
+
+## 4. Preguntas frecuentes
+
+El sitio incluye una sección de preguntas frecuentes para responder dudas habituales, entre ellas:
+
+- ¿Hace falta diagnóstico para participar?
+- ¿Qué sucede si una persona tiene DCL?
+- ¿Los talleres son evaluativos?
+- ¿Cuántas personas participan por grupo?
+- ¿Se pueden contratar talleres para una institución?
+
+---
+
+## 5. Sobre mí / Sobre nosotras
+
+Esta sección presenta a la profesional responsable del proyecto y su enfoque de trabajo. Debe destacar:
+
+- Formación psicopedagógica.
+- Mirada sobre el envejecimiento.
+- Motivos para priorizar talleres por sobre el uso exclusivo de material descargable.
+
+> Creemos en la estimulación cognitiva como un proceso humano, vincular y respetuoso, donde aprender y ejercitar también es encontrarse con otros.
