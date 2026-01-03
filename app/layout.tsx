@@ -20,6 +20,8 @@ export const metadata: Metadata = {
     "Recursos y talleres de estimulación neurocognitiva para adultos mayores. Acompañamos el envejecimiento activo.",
 };
 
+import { AuthProvider } from "@/context/AuthContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,9 +32,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <Header />
-        <main className="grow">{children}</main>
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <main className="grow">{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
