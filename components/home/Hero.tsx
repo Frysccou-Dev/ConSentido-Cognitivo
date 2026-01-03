@@ -3,8 +3,8 @@ import Image from "next/image";
 export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-fondo py-20 lg:py-32 px-4">
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-anillo-claro/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[400px] h-[400px] bg-secundario-corazon/5 rounded-full blur-3xl"></div>
+      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-150 h-150 bg-anillo-claro/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-100 h-100 bg-secundario-corazon/5 rounded-full blur-3xl"></div>
 
       <div className="container mx-auto max-w-6xl relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -62,8 +62,8 @@ export default function Hero() {
           <div className="lg:col-span-5 relative flex justify-center lg:justify-end">
             <div className="relative w-72 h-72 md:w-96 md:h-96 rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
               <Image
-                src="/ConSentido_Logo.jpeg"
-                alt="ConSentido Logo Hero"
+                src="/Hero.jpeg"
+                alt="Estimulación neurocognitiva - Sesión de trabajo"
                 fill
                 className="object-cover scale-110"
               />
@@ -71,7 +71,7 @@ export default function Hero() {
             <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl -rotate-6 hidden md:block border border-anillo-claro/20 overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-secundario-corazon"></div>
               <p className="text-primario-cerebro font-bold text-lg mb-1 italic">
-                "Neuroplasticidad"
+                &quot;Neuroplasticidad&quot;
               </p>
               <p className="text-texto-secundario text-xs font-medium">
                 Aprender siempre es posible.

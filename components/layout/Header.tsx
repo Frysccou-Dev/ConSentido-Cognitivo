@@ -18,8 +18,8 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="header-style bg-fondo shadow-sm border-b border-anillo-claro/20">
-      <nav className="container mx-auto px-4 lg:px-8 flex items-center justify-between">
+    <header className="header-style bg-fondo shadow-sm border-b border-anillo-claro/20 relative z-50">
+      <nav className="container mx-auto px-4 lg:px-8 flex items-center justify-between relative z-50 bg-fondo">
         <Link href="/" className="flex items-center py-2">
           <Image
             src="/ConSentido-Logo.png"
@@ -74,12 +74,12 @@ export default function Header() {
       </nav>
 
       {isOpen && (
-        <div className="md:hidden bg-fondo border-t border-anillo-claro/20 absolute w-full px-4 py-4 flex flex-col gap-4 shadow-lg animate-in fade-in slide-in-from-top-4">
+        <div className="md:hidden bg-fondo border-t border-anillo-claro/20 absolute top-full left-0 w-full px-4 py-8 flex flex-col gap-5 shadow-2xl z-40 animate-in fade-in slide-in-from-top-2">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-header hover:text-secundario-corazon transition-colors text-lg"
+              className="text-header hover:text-secundario-corazon transition-colors text-xl font-bold px-2 py-1"
               onClick={() => setIsOpen(false)}
             >
               {item.name}
