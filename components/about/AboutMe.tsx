@@ -6,7 +6,7 @@ export default function AboutMe() {
       <div className="container mx-auto max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           <div className="lg:col-span-5 relative">
-            <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl skew-y-1">
+            <div className="relative aspect-4/5 rounded-3xl overflow-hidden shadow-2xl skew-y-1">
               <div className="absolute inset-0 bg-primario-cerebro/10 animate-pulse"></div>
               <Image
                 src="/Hero.jpeg"

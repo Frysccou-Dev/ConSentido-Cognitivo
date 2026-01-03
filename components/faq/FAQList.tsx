@@ -67,7 +67,7 @@ export default function FAQList() {
                   className="w-full flex items-center gap-6 p-8 text-left group"
                 >
                   <span
-                    className={`flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                    className={`shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                       activeIndex === index
                         ? "bg-primario-cerebro border-primario-cerebro text-white"
                         : "border-anillo-claro text-primario-cerebro group-hover:border-primario-cerebro"
