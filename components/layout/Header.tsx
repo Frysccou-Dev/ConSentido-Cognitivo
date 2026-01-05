@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
   { name: "Inicio", href: "/" },
@@ -15,6 +16,8 @@ const navItems = [
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { userData } = useAuth();
+  const isAdmin = userData?.rol === "admin" || userData?.rol === "super";
 
   return (
     <header className="header-style bg-fondo shadow-sm border-b border-anillo-claro/20 relative z-50">
@@ -40,6 +43,15 @@ export default function Header() {
               {item.name}
             </Link>
           ))}
+
+          {isAdmin && (
+            <Link
+              href="/admin/recursos"
+              className="bg-secundario-corazon/10 text-secundario-corazon px-4 py-2 rounded-xl font-black text-xs uppercase tracking-widest border border-secundario-corazon/20 hover:bg-secundario-corazon hover:text-white transition-all shadow-sm"
+            >
+              Admin_Panel
+            </Link>
+          )}
         </div>
 
         <button
@@ -84,6 +96,16 @@ export default function Header() {
               {item.name}
             </Link>
           ))}
+
+          {isAdmin && (
+            <Link
+              href="/admin/recursos"
+              className="text-secundario-corazon font-black text-xl px-2 py-4 border-t border-anillo-claro/10 mt-2"
+              onClick={() => setIsOpen(false)}
+            >
+              Admin_Panel
+            </Link>
+          )}
         </div>
       )}
     </header>

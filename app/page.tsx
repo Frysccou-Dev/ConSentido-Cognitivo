@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Hero from "@/components/home/Hero";
 import Offerings from "@/components/home/Offerings";
 import Functions from "@/components/home/Functions";
@@ -18,9 +19,11 @@ export default function Home() {
             Estamos para acompañarte. Consultanos por talleres personalizados o
             materiales específicos según tus necesidades.
           </p>
-          <button className="bg-secundario-corazon text-fondo px-10 py-4 rounded-full font-bold hover:scale-105 transition-transform shadow-lg mt-4">
-            Ponete en contacto
-          </button>
+          <Link href="/contacto">
+            <button className="bg-secundario-corazon text-fondo px-10 py-4 rounded-full font-bold hover:scale-105 transition-transform shadow-lg mt-4">
+              Ponete en contacto
+            </button>
+          </Link>
         </div>
       </section>
     </div>

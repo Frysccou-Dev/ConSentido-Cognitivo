@@ -14,17 +14,20 @@ export interface RecursoPDF {
   urlArchivo: string; // Link de Firebase Storage al PDF
   urlImagen: string; // Imagen de portada para la tienda
   /** Funciones cognitivas que estimula este material */
-  categorias: (
-    | "Memoria"
-    | "Atención"
-    | "Lenguaje"
-    | "Funciones ejecutivas"
-    | "Orientación"
-    | "Habilidades visoespaciales"
-  )[];
+  categorias: string[];
   /** A quién está dirigido el material */
   publico: ("Hogar" | "Consultorio" | "Institución")[];
+  activo: boolean; // Para mostrar o no el recurso en la web
   fechaCreacion: Timestamp;
+}
+
+/** Versión serializable para Client Components */
+export interface RecursoPDFSerializado
+  extends Omit<RecursoPDF, "fechaCreacion"> {
+  fechaCreacion: {
+    seconds: number;
+    nanoseconds: number;
+  };
 }
 
 /**

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Offerings() {
   return (
     <section className="bg-white py-24 md:py-32 px-4">
@@ -44,9 +46,11 @@ export default function Offerings() {
                   </li>
                 ))}
               </ul>
-              <button className="bg-primario-cerebro text-fondo px-8 py-3 rounded-full font-bold hover:bg-anillo-oscuro transition-all shadow-md group-hover:shadow-lg">
-                Ir a la tienda
-              </button>
+              <Link href="/recursos">
+                <button className="bg-primario-cerebro text-fondo px-8 py-3 rounded-full font-bold hover:bg-anillo-oscuro transition-all shadow-md group-hover:shadow-lg">
+                  Ir a la tienda
+                </button>
+              </Link>
             </div>
           </div>
 
@@ -81,9 +85,11 @@ export default function Offerings() {
                   </li>
                 ))}
               </ul>
-              <button className="bg-secundario-corazon text-fondo px-8 py-3 rounded-full font-bold hover:bg-sombra-corazon transition-all shadow-md group-hover:shadow-lg">
-                Saber más
-              </button>
+              <Link href="/talleres">
+                <button className="bg-secundario-corazon text-fondo px-8 py-3 rounded-full font-bold hover:bg-sombra-corazon transition-all shadow-md group-hover:shadow-lg">
+                  Saber más
+                </button>
+              </Link>
             </div>
           </div>
         </div>

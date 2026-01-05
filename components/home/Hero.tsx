@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -30,18 +31,22 @@ export default function Hero() {
             </p>
 
             <div className="flex flex-wrap gap-5 mt-4">
-              <button className="bg-primario-cerebro text-fondo px-10 py-4 rounded-full font-bold hover:bg-anillo-oscuro hover:-translate-y-1 transition-all shadow-lg hover:shadow-primario-cerebro/20">
-                Ver recursos PDF
-              </button>
-              <button className="border-2 border-secundario-corazon text-secundario-corazon px-10 py-4 rounded-full font-bold hover:bg-secundario-corazon hover:text-fondo hover:-translate-y-1 transition-all">
-                Conocer talleres
-              </button>
+              <Link href="/recursos">
+                <button className="bg-primario-cerebro text-fondo px-10 py-4 rounded-full font-bold hover:bg-anillo-oscuro hover:-translate-y-1 transition-all shadow-lg hover:shadow-primario-cerebro/20">
+                  Ver recursos PDF
+                </button>
+              </Link>
+              <Link href="/talleres">
+                <button className="border-2 border-secundario-corazon text-secundario-corazon px-10 py-4 rounded-full font-bold hover:bg-secundario-corazon hover:text-fondo hover:-translate-y-1 transition-all">
+                  Conocer talleres
+                </button>
+              </Link>
             </div>
 
             <div className="flex items-center gap-8 mt-8 border-t border-anillo-claro/30 pt-8">
               <div className="flex flex-col">
                 <span className="text-2xl font-bold text-primario-cerebro">
-                  +100
+                  +10
                 </span>
                 <span className="text-sm text-texto-secundario font-medium">
                   Recursos subidos

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Taller, UUID } from "@/types/firebase-types";
 
 const mockTalleres: Taller[] = [
@@ -39,8 +40,48 @@ const mockTalleres: Taller[] = [
 ];
 
 export default function WorkshopList() {
+  const [selectedTaller, setSelectedTaller] = useState<Taller | null>(null);
+  const [formData, setFormData] = useState({
+    nombre: "",
+    email: "",
+    mensaje: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleConsultar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedTaller) return;
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/workshop-query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          taller: selectedTaller.titulo,
+          modalidad: selectedTaller.modalidad,
+        }),
+      });
+
+      if (response.ok) {
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+          setSelectedTaller(null);
+          setFormData({ nombre: "", email: "", mensaje: "" });
+        }, 3000);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <section className="py-20 lg:py-32 px-4 bg-fondo/30">
+    <section className="py-20 lg:py-32 px-4 bg-fondo/30 relative min-h-screen">
       <div className="container mx-auto max-w-6xl">
         <div className="flex flex-col gap-4 mb-20">
           <span className="text-secundario-corazon font-black uppercase tracking-[0.3em] text-xs">
@@ -101,7 +142,10 @@ export default function WorkshopList() {
                     {taller.duracion}
                   </span>
                 </div>
-                <button className="w-full bg-primario-cerebro text-white font-black uppercase tracking-widest py-4 rounded-3xl mt-4 hover:bg-anillo-oscuro transition-all">
+                <button
+                  onClick={() => setSelectedTaller(taller)}
+                  className="w-full bg-primario-cerebro text-white font-black uppercase tracking-widest py-4 rounded-3xl mt-4 hover:bg-anillo-oscuro transition-all focus:scale-95 active:scale-95"
+                >
                   Consultar Cupos_
                 </button>
               </div>
@@ -109,6 +153,111 @@ export default function WorkshopList() {
           ))}
         </div>
       </div>
+
+      {selectedTaller && (
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-primario-cerebro/40 backdrop-blur-md animate-in fade-in duration-300">
+          <div
+            className="bg-white w-full max-w-lg rounded-[40px] p-8 lg:p-12 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelectedTaller(null)}
+              className="absolute top-8 right-8 text-primario-cerebro/40 hover:text-primario-cerebro transition-colors text-2xl"
+            >
+              ✕
+            </button>
+
+            {success ? (
+              <div className="flex flex-col items-center justify-center gap-6 py-10 text-center">
+                <div className="w-20 h-20 bg-primario-cerebro text-white rounded-full flex items-center justify-center text-4xl">
+                  ✓
+                </div>
+                <h3 className="text-2xl font-black text-primario-cerebro uppercase">
+                  Consulta Enviada
+                </h3>
+                <p className="text-texto-secundario">
+                  Recibimos tu interés por <br />{" "}
+                  <span className="font-bold text-primario-cerebro">
+                    {selectedTaller.titulo}
+                  </span>
+                  .
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-8">
+                <div className="flex flex-col gap-2">
+                  <span className="text-secundario-corazon font-black uppercase tracking-widest text-[10px]">
+                    Consultar por taller
+                  </span>
+                  <h2 className="text-3xl font-black text-primario-cerebro uppercase tracking-tighter leading-none">
+                    {selectedTaller.titulo}
+                  </h2>
+                </div>
+
+                <form
+                  onSubmit={handleConsultar}
+                  className="flex flex-col gap-6"
+                >
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/60">
+                      Tu Nombre
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.nombre}
+                      onChange={(e) =>
+                        setFormData({ ...formData, nombre: e.target.value })
+                      }
+                      placeholder="Nombre completo"
+                      className="w-full bg-fondo/50 border-2 border-anillo-claro/10 rounded-2xl px-6 py-4 outline-none focus:border-primario-cerebro transition-all font-medium text-texto-principal"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/60">
+                      Email Especial
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                      placeholder="tu@email.com"
+                      className="w-full bg-fondo/50 border-2 border-anillo-claro/10 rounded-2xl px-6 py-4 outline-none focus:border-primario-cerebro transition-all font-medium text-texto-principal"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/60">
+                      Consulta o duda
+                    </label>
+                    <textarea
+                      rows={4}
+                      required
+                      value={formData.mensaje}
+                      onChange={(e) =>
+                        setFormData({ ...formData, mensaje: e.target.value })
+                      }
+                      placeholder="¿En qué podemos ayudarte?"
+                      className="w-full bg-fondo/50 border-2 border-anillo-claro/10 rounded-2xl px-6 py-4 outline-none focus:border-primario-cerebro transition-all font-medium text-texto-principal resize-none"
+                    ></textarea>
+                  </div>
+
+                  <button
+                    disabled={loading}
+                    className="bg-primario-cerebro text-white font-black uppercase tracking-widest py-5 rounded-3xl shadow-xl hover:bg-anillo-oscuro transition-all disabled:opacity-50"
+                  >
+                    {loading ? "Enviando..." : "Enviar Consulta_"}
+                  </button>
+                </form>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

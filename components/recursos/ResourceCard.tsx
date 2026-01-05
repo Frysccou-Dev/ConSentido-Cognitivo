@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import { RecursoPDF } from "@/types/firebase-types";
+import { RecursoPDFSerializado } from "@/types/firebase-types";
 
 interface ResourceCardProps {
-  recurso: RecursoPDF;
+  recurso: RecursoPDFSerializado;
 }
 
 export default function ResourceCard({ recurso }: ResourceCardProps) {
