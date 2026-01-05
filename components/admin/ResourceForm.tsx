@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { RecursoPDFSerializado } from "@/types/firebase-types";
+import { auth } from "@/lib/firebase/firebase";
 
 interface ResourceFormProps {
   onSuccess: () => void;
@@ -79,8 +80,12 @@ export default function ResourceForm({
     );
 
     try {
+      const idToken = await auth.currentUser?.getIdToken();
       const res = await fetch("/api/admin/upload", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
         body: uploadData,
       });
       const data = await res.json();
@@ -105,10 +110,14 @@ export default function ResourceForm({
     setLoading(true);
 
     try {
+      const idToken = await auth.currentUser?.getIdToken();
       const method = initialData ? "PUT" : "POST";
       const res = await fetch("/api/admin/recursos", {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
         body: JSON.stringify({
           ...formData,
           id: initialData?.id,
@@ -314,7 +323,7 @@ export default function ResourceForm({
           />
           <label
             htmlFor="cover-upload"
-            className={`flex flex-col items-center justify-center border-2 border-dashed rounded-[2rem] p-6 cursor-pointer transition-all min-h-[140px] ${
+            className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2rem p-6 cursor-pointer transition-all min-h-35 ${
               formData.urlImagen
                 ? "border-primario-cerebro/40 bg-primario-cerebro/5"
                 : "border-anillo-claro/30 hover:bg-fondo/50"
@@ -360,7 +369,7 @@ export default function ResourceForm({
           />
           <label
             htmlFor="pdf-upload"
-            className={`flex flex-col items-center justify-center border-2 border-dashed rounded-[2rem] p-6 cursor-pointer transition-all min-h-[140px] ${
+            className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2rem p-6 cursor-pointer transition-all min-h-35 ${
               formData.urlArchivo
                 ? "border-secundario-corazon/40 bg-secundario-corazon/5"
                 : "border-anillo-claro/30 hover:bg-fondo/50"

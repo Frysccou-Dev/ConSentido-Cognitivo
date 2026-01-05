@@ -16,8 +16,13 @@ const navItems = [
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const { userData } = useAuth();
+  const { userData, logout } = useAuth();
   const isAdmin = userData?.rol === "admin" || userData?.rol === "super";
+
+  const handleLogout = async () => {
+    await logout();
+    setIsOpen(false);
+  };
 
   return (
     <header className="header-style bg-fondo shadow-sm border-b border-anillo-claro/20 relative z-50">
@@ -45,12 +50,20 @@ export default function Header() {
           ))}
 
           {isAdmin && (
-            <Link
-              href="/admin/recursos"
-              className="bg-secundario-corazon/10 text-secundario-corazon px-4 py-2 rounded-xl font-black text-xs uppercase tracking-widest border border-secundario-corazon/20 hover:bg-secundario-corazon hover:text-white transition-all shadow-sm"
-            >
-              Admin_Panel
-            </Link>
+            <div className="flex items-center gap-3 ml-4">
+              <Link
+                href="/admin/recursos"
+                className="bg-secundario-corazon/10 text-secundario-corazon px-4 py-2 rounded-xl font-black text-xs uppercase tracking-widest border border-secundario-corazon/20 hover:bg-secundario-corazon hover:text-white transition-all shadow-sm"
+              >
+                Admin_Panel
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="bg-primario-cerebro/10 text-primario-cerebro px-4 py-2 rounded-xl font-black text-xs uppercase tracking-widest border border-primario-cerebro/20 hover:bg-primario-cerebro hover:text-white transition-all shadow-sm"
+              >
+                Logout
+              </button>
+            </div>
           )}
         </div>
 
@@ -98,13 +111,21 @@ export default function Header() {
           ))}
 
           {isAdmin && (
-            <Link
-              href="/admin/recursos"
-              className="text-secundario-corazon font-black text-xl px-2 py-4 border-t border-anillo-claro/10 mt-2"
-              onClick={() => setIsOpen(false)}
-            >
-              Admin_Panel
-            </Link>
+            <div className="flex flex-col gap-3 border-t border-anillo-claro/10 mt-2 pt-4">
+              <Link
+                href="/admin/recursos"
+                className="text-secundario-corazon font-black text-xl px-2"
+                onClick={() => setIsOpen(false)}
+              >
+                Admin_Panel
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="text-primario-cerebro font-black text-xl px-2 text-left"
+              >
+                Cerrar Sesión
+              </button>
+            </div>
           )}
         </div>
       )}
