@@ -1,6 +1,43 @@
 "use client";
 
+import { useState } from "react";
+
 export default function ContactForm() {
+  const [formData, setFormData] = useState({
+    nombre: "",
+    email: "",
+    interes: "General",
+    mensaje: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setSuccess(true);
+        setFormData({ nombre: "", email: "", interes: "General", mensaje: "" });
+      } else {
+        setError("Ocurrió un error al enviar el mensaje. Reintente por favor.");
+      }
+    } catch (err) {
+      setError("No pudimos conectar con el servidor.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section className="py-20 lg:py-32 px-4 bg-white relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-2 bg-primario-cerebro/10"></div>
@@ -45,7 +82,7 @@ export default function ContactForm() {
                     Email
                   </p>
                   <p className="text-lg font-bold text-primario-cerebro">
-                    hola@consentidocognitivo.com
+                    consentidocognitivo@gmail.com
                   </p>
                 </div>
               </div>
@@ -87,59 +124,114 @@ export default function ContactForm() {
           <div className="bg-fondo p-10 lg:p-12 rounded-[40px] border-2 border-primario-cerebro/5 shadow-2xl relative">
             <div className="absolute -top-4 -right-4 w-20 h-20 bg-secundario-corazon/20 rounded-full blur-2xl"></div>
 
-            <form
-              className="flex flex-col gap-6 relative z-10"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/60">
-                  Nombre completo
-                </label>
-                <input
-                  type="text"
-                  placeholder="Escribí tu nombre..."
-                  className="w-full bg-white border-2 border-anillo-claro/20 rounded-2xl px-6 py-4 outline-none focus:border-primario-cerebro transition-all font-medium"
-                />
+            {success ? (
+              <div className="flex flex-col items-center justify-center gap-6 py-10 text-center animate-in fade-in zoom-in duration-500">
+                <div className="w-20 h-20 bg-primario-cerebro text-white rounded-full flex items-center justify-center text-4xl">
+                  ✓
+                </div>
+                <h3 className="text-2xl font-black text-primario-cerebro uppercase">
+                  ¡Mensaje enviado!
+                </h3>
+                <p className="text-texto-secundario">
+                  Gracias por contactarnos. Te responderemos a <br /> la
+                  brevedad.
+                </p>
+                <button
+                  onClick={() => setSuccess(false)}
+                  className="text-secundario-corazon font-bold border-b-2 border-secundario-corazon pb-1"
+                >
+                  Enviar otro mensaje
+                </button>
               </div>
+            ) : (
+              <form
+                className="flex flex-col gap-6 relative z-10"
+                onSubmit={handleSubmit}
+              >
+                {error && (
+                  <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-[10px] font-bold border border-red-100 italic uppercase tracking-wider">
+                    {error}
+                  </div>
+                )}
 
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/60">
-                  Email de contacto
-                </label>
-                <input
-                  type="email"
-                  placeholder="tu@email.com"
-                  className="w-full bg-white border-2 border-anillo-claro/20 rounded-2xl px-6 py-4 outline-none focus:border-primario-cerebro transition-all font-medium"
-                />
-              </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/60">
+                    Nombre completo
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.nombre}
+                    onChange={(e) =>
+                      setFormData({ ...formData, nombre: e.target.value })
+                    }
+                    placeholder="Escribí tu nombre..."
+                    className="w-full bg-white border-2 border-anillo-claro/20 rounded-2xl px-6 py-4 outline-none focus:border-primario-cerebro transition-all font-medium"
+                  />
+                </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/60">
-                  Interés
-                </label>
-                <select className="w-full bg-white border-2 border-anillo-claro/20 rounded-2xl px-6 py-4 outline-none focus:border-primario-cerebro transition-all font-medium appearance-none">
-                  <option>Talleres Grupales</option>
-                  <option>Talleres Individuales</option>
-                  <option>Material Descargable (Recursos)</option>
-                  <option>Consulta General</option>
-                </select>
-              </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/60">
+                    Email de contacto
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    placeholder="tu@email.com"
+                    className="w-full bg-white border-2 border-anillo-claro/20 rounded-2xl px-6 py-4 outline-none focus:border-primario-cerebro transition-all font-medium"
+                  />
+                </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/60">
-                  Mensaje
-                </label>
-                <textarea
-                  rows={4}
-                  placeholder="¿En qué podemos ayudarte?"
-                  className="w-full bg-white border-2 border-anillo-claro/20 rounded-2xl px-6 py-4 outline-none focus:border-primario-cerebro transition-all font-medium resize-none"
-                ></textarea>
-              </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/60">
+                    Interés
+                  </label>
+                  <select
+                    value={formData.interes}
+                    onChange={(e) =>
+                      setFormData({ ...formData, interes: e.target.value })
+                    }
+                    className="w-full bg-white border-2 border-anillo-claro/20 rounded-2xl px-6 py-4 outline-none focus:border-primario-cerebro transition-all font-medium appearance-none"
+                  >
+                    <option value="Talleres Grupales">Talleres Grupales</option>
+                    <option value="Talleres Individuales">
+                      Talleres Individuales
+                    </option>
+                    <option value="Material Descargable">
+                      Material Descargable (Recursos)
+                    </option>
+                    <option value="General">Consulta General</option>
+                  </select>
+                </div>
 
-              <button className="bg-primario-cerebro text-white font-black uppercase tracking-widest py-5 rounded-2xl shadow-xl hover:bg-anillo-oscuro hover:-translate-y-1 transition-all mt-4">
-                Enviar Mensaje_
-              </button>
-            </form>
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/60">
+                    Mensaje
+                  </label>
+                  <textarea
+                    rows={4}
+                    required
+                    value={formData.mensaje}
+                    onChange={(e) =>
+                      setFormData({ ...formData, mensaje: e.target.value })
+                    }
+                    placeholder="¿En qué podemos ayudarte?"
+                    className="w-full bg-white border-2 border-anillo-claro/20 rounded-2xl px-6 py-4 outline-none focus:border-primario-cerebro transition-all font-medium resize-none"
+                  ></textarea>
+                </div>
+
+                <button
+                  disabled={loading}
+                  className="bg-primario-cerebro text-white font-black uppercase tracking-widest py-5 rounded-2xl shadow-xl hover:bg-anillo-oscuro hover:-translate-y-1 transition-all mt-4 disabled:opacity-50 disabled:transform-none"
+                >
+                  {loading ? "Enviando..." : "Enviar Mensaje_"}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>

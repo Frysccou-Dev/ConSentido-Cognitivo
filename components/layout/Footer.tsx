@@ -42,10 +42,10 @@ export default function Footer() {
               Talleres
             </Link>
             <Link
-              href="/sobre-mi"
+              href="/sobre-nosotras"
               className="hover:text-secundario-corazon transition-colors"
             >
-              Sobre mí
+              Sobre nosotras
             </Link>
           </div>
           <div className="flex flex-col gap-4">
@@ -69,10 +69,10 @@ export default function Footer() {
           <h3 className="font-bold text-lg text-anillo-claro">Contacto</h3>
           <p className="opacity-90">Buenos Aires, Argentina</p>
           <a
-            href="mailto:hola@consentido.com"
+            href="mailto:consentidocognitivo@gmail.com"
             className="hover:text-secundario-corazon transition-colors"
           >
-            hola@consentido.com
+            consentidocognitivo@gmail.com
           </a>
         </div>
       </div>
