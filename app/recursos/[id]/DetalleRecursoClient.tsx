@@ -90,7 +90,7 @@ export default function DetalleRecursoClient({
                   </span>
                 ))}
               </div>
-              <h1 className="text-6xl font-black text-primario-cerebro uppercase tracking-tighter leading-[0.85]">
+              <h1 className="text-4xl md:text-6xl font-black text-primario-cerebro uppercase tracking-tighter leading-[0.9] wrap-break-word">
                 {recurso.titulo}
               </h1>
             </div>
