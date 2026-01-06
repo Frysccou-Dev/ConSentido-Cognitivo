@@ -222,23 +222,23 @@ export default function CarritoPage() {
                     className="object-cover"
                   />
                 </div>
-                <div className="grow min-w-0 pr-12 sm:pr-0">
-                  <h3 className="font-black text-lg md:text-xl text-primario-cerebro uppercase leading-tight tracking-tight mb-1 md:mb-2 truncate sm:whitespace-normal">
+                <div className="grow w-full min-w-0">
+                  <h3 className="font-black text-lg md:text-xl text-primario-cerebro uppercase leading-tight tracking-tight mb-1 md:mb-2 wrap-break-word">
                     {item.titulo}
                   </h3>
                   <p className="text-xs md:text-sm text-texto-secundario font-medium opacity-60">
                     Formato PDF Digital
                   </p>
                 </div>
-                <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto mt-2 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-anillo-claro/10">
-                  <p className="font-black text-secundario-corazon text-lg">
+                <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-anillo-claro/10 gap-4">
+                  <p className="font-black text-secundario-corazon text-lg shrink-0">
                     ${item.precio}
                   </p>
                   <button
                     onClick={() => handleRemove(item.id, item.titulo)}
-                    className="text-[10px] font-black uppercase text-red-500/60 hover:text-red-500 p-2 sm:bg-red-50 rounded-lg transition-colors flex items-center gap-1"
+                    className="text-[10px] font-black uppercase text-red-500/60 hover:text-red-500 p-2 sm:bg-red-50 rounded-lg transition-colors flex items-center gap-1 shrink-0"
                   >
-                    <span className="sm:hidden">Quitar</span>
+                    <span className="sm:hidden">Quitar del carrito</span>
                     <span className="hidden sm:inline">Eliminar</span>
                     <svg
                       className="w-3 h-3"
