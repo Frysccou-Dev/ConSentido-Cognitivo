@@ -24,6 +24,8 @@ export const metadata: Metadata = {
 };
 
 import { AuthProvider } from "@/context/AuthContext";
+import { CartProvider } from "@/context/CartContext";
+import { ToastProvider } from "@/context/UIContext";
 
 export default function RootLayout({
   children,
@@ -36,9 +38,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <AuthProvider>
-          <Header />
-          <main className="grow">{children}</main>
-          <Footer />
+          <CartProvider>
+            <ToastProvider>
+              <Header />
+              <main className="grow">{children}</main>
+              <Footer />
+            </ToastProvider>
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

@@ -1,201 +1,200 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { RecursoPDFSerializado } from "@/types/firebase-types";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/context/CartContext";
+import { useUI } from "@/context/UIContext";
+import Link from "next/link";
 
 export default function DetalleRecursoClient({
   recurso,
 }: {
   recurso: RecursoPDFSerializado;
 }) {
-  const [showEmailForm, setShowEmailForm] = useState(false);
+  const router = useRouter();
+  const { addToCart, items } = useCart();
+  const { showToast } = useUI();
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState("");
+  const [sending, setSending] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const isInCart = items.some((i) => i.id === recurso.id);
+
+  const handleFreeDownload = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-
+    setSending(true);
     try {
-      if (recurso.precio === 0) {
-        const response = await fetch("/api/deliver-resource", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            recursoTitulo: recurso.titulo,
-            urlArchivo: recurso.urlArchivo,
-          }),
-        });
+      const res = await fetch("/api/deliver-resource", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          recursoTitulo: recurso.titulo,
+          urlArchivo: recurso.urlArchivo,
+        }),
+      });
 
-        if (response.ok) {
-          setSuccess(true);
-        } else {
-          setError("Error al enviar el material. Reintente por favor.");
-        }
+      if (res.ok) {
+        showToast("¡Mail enviado con éxito! Revisá tu casilla.", "success");
+        setEmail("");
+        setShowEmailForm(false);
       } else {
-        const response = await fetch("/api/checkout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            resourceId: recurso.id,
-            email,
-          }),
-        });
-
-        const data = await response.json();
-        if (data.init_point) {
-          window.location.href = data.init_point;
-        } else {
-          setError("No pudimos generar el link de pago.");
-        }
+        showToast("Hubo un error al enviar el mail.", "error");
       }
     } catch {
-      setError("No pudimos conectar con el servidor.");
+      showToast("Error de conexión.", "error");
     } finally {
-      setLoading(false);
+      setSending(false);
     }
   };
 
-  return (
-    <main className="py-20 px-4 bg-white min-h-screen">
-      <div className="container mx-auto max-w-5xl">
-        <Link
-          href="/recursos"
-          className="inline-flex items-center gap-2 text-texto-secundario hover:text-primario-cerebro transition-colors mb-12 font-medium"
-        >
-          <span>&larr;</span> Volver a la biblioteca
-        </Link>
+  const handleQuickAdd = () => {
+    if (isInCart) {
+      showToast("Ya está en el carrito", "info");
+      return;
+    }
+    addToCart(recurso);
+    showToast("Agregado al carrito", "success");
+  };
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-start">
-          <div className="relative aspect-3/4 rounded-3xl overflow-hidden shadow-2xl bg-fondo">
+  return (
+    <main className="min-h-screen pt-32 pb-20 px-4 bg-fondo">
+      <div className="container mx-auto max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          <div className="relative aspect-square w-full rounded-[4rem] overflow-hidden shadow-2xl border-4 border-white">
             <Image
               src={recurso.urlImagen}
               alt={recurso.titulo}
               fill
               className="object-cover"
+              priority
             />
+            <div className="absolute top-8 left-8 bg-white/90 backdrop-blur-md px-6 py-3 rounded-2xl shadow-xl">
+              <span className="text-xl font-black text-primario-cerebro italic">
+                {recurso.precio === 0 ? "GRATIS_" : `$${recurso.precio}`}
+              </span>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-10">
             <div className="flex flex-col gap-4">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 {recurso.categorias.map((cat) => (
                   <span
                     key={cat}
-                    className="text-xs font-bold uppercase tracking-widest text-secundario-corazon bg-secundario-corazon/5 px-3 py-1 rounded-full border border-secundario-corazon/10"
+                    className="bg-anillo-claro/10 text-primario-cerebro px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest"
                   >
-                    {cat}
+                    #{cat}
                   </span>
                 ))}
               </div>
-              <h1 className="text-5xl font-black text-primario-cerebro uppercase tracking-tighter leading-[0.9]">
+              <h1 className="text-6xl font-black text-primario-cerebro uppercase tracking-tighter leading-[0.85]">
                 {recurso.titulo}
               </h1>
-              <div className="text-3xl font-black text-secundario-corazon mt-4">
-                {recurso.precio === 0 ? "GRATIS_" : `$${recurso.precio}`}
-              </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <h3 className="font-black text-lg text-primario-cerebro uppercase tracking-widest">
-                Descripción
+            <div className="flex flex-col gap-6">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primario-cerebro/40">
+                Sobre este material
               </h3>
-              <p className="text-texto-principal opacity-80 leading-relaxed text-lg border-l-4 border-anillo-claro/20 pl-6">
+              <p className="text-lg text-texto-principal opacity-70 font-medium leading-relaxed italic">
                 {recurso.descripcion}
               </p>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <h3 className="font-black text-lg text-primario-cerebro uppercase tracking-widest">
-                Público objetivo
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {recurso.publico.map((p) => (
-                  <span
-                    key={p}
-                    className="px-4 py-2 bg-fondo text-primario-cerebro text-[10px] font-black uppercase tracking-widest rounded-xl border border-anillo-claro/10"
-                  >
-                    {p}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-8 border-t border-anillo-claro/20">
-              {success ? (
-                <div className="bg-primario-cerebro/5 border-2 border-primario-cerebro p-8 rounded-3xl animate-in fade-in zoom-in-95 duration-500">
-                  <div className="flex flex-col items-center text-center gap-4">
-                    <div className="w-16 h-16 bg-primario-cerebro text-fondo rounded-full flex items-center justify-center text-2xl font-black">
-                      ✓
+            <div className="flex flex-col gap-8 bg-white/50 p-10 rounded-[3rem] border-2 border-anillo-claro/10 backdrop-blur-sm">
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/40">
+                  Ideal para usar en
+                </span>
+                <div className="flex flex-wrap gap-4">
+                  {recurso.publico.map((p) => (
+                    <div key={p} className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-secundario-corazon" />
+                      <span className="font-black text-sm text-primario-cerebro uppercase">
+                        {p}
+                      </span>
                     </div>
-                    <h4 className="text-2xl font-black text-primario-cerebro uppercase">
-                      ¡Enviado!
-                    </h4>
-                    <p className="text-texto-secundario font-medium italic">
-                      Revisá tu bandeja de entrada (`{email}`)
-                    </p>
-                  </div>
+                  ))}
                 </div>
-              ) : (
-                <div className="flex flex-col gap-6">
-                  {!showEmailForm ? (
+              </div>
+
+              <div className="flex flex-col gap-4">
+                {!showEmailForm ? (
+                  <div className="flex flex-col gap-3">
                     <button
-                      onClick={() => setShowEmailForm(true)}
+                      onClick={() => {
+                        if (recurso.precio === 0) {
+                          setShowEmailForm(true);
+                        } else {
+                          addToCart(recurso);
+                          router.push("/carrito");
+                        }
+                      }}
                       className="w-full bg-primario-cerebro text-fondo py-6 rounded-3xl font-black text-xl uppercase tracking-widest hover:bg-anillo-oscuro hover:-translate-y-1 transition-all shadow-xl"
                     >
                       {recurso.precio === 0
                         ? "Obtener Material_"
                         : "Comprar ahora_"}
                     </button>
-                  ) : (
-                    <div className="flex flex-col gap-6 p-8 bg-fondo rounded-[40px] border-2 border-primario-cerebro/5 animate-in slide-in-from-bottom-4 duration-500">
-                      <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-primario-cerebro/60">
-                          ¿A qué email te lo mandamos?
-                        </label>
-                        <form
-                          onSubmit={handleSubmit}
-                          className="flex flex-col gap-4"
-                        >
-                          <input
-                            type="email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="tu@email.com"
-                            className="w-full bg-white border-2 border-anillo-claro/20 rounded-2xl px-6 py-4 outline-none focus:border-primario-cerebro transition-all font-bold"
-                          />
-                          <button
-                            disabled={loading}
-                            className="w-full bg-secundario-corazon text-fondo py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:bg-sombra-corazon transition-all disabled:opacity-50"
-                          >
-                            {loading
-                              ? "Procesando..."
-                              : recurso.precio === 0
-                              ? "Confirmar y Descargar_"
-                              : "Ir a pagar_"}
-                          </button>
-                        </form>
-                      </div>
-                      {error && (
-                        <p className="text-red-500 text-xs font-bold uppercase italic">
-                          {error}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  <p className="text-center text-[10px] font-black text-texto-secundario uppercase tracking-widest">
-                    Formato PDF • Entrega por correo inmediata
-                  </p>
-                </div>
-              )}
+
+                    {recurso.precio > 0 && (
+                      <button
+                        onClick={handleQuickAdd}
+                        className={`w-full py-5 rounded-3xl font-black text-[12px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 border-2 ${
+                          isInCart
+                            ? "bg-green-500 border-green-500 text-white"
+                            : "border-primario-cerebro text-primario-cerebro hover:bg-primario-cerebro/5"
+                        }`}
+                      >
+                        {isInCart ? "✓ En el carrito" : "Añadir al carrito_"}
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <form
+                    onSubmit={handleFreeDownload}
+                    className="flex flex-col gap-4 animate-in slide-in-from-top-4 duration-500"
+                  >
+                    <input
+                      type="email"
+                      required
+                      placeholder="tu@email.com"
+                      className="w-full bg-fondo border-2 border-anillo-claro/20 rounded-2xl px-6 py-5 outline-none focus:border-primario-cerebro font-bold"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <button
+                      disabled={sending}
+                      className="w-full bg-secundario-corazon text-white py-6 rounded-3xl font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg disabled:opacity-50"
+                    >
+                      {sending ? "Enviando..." : "Enviar a mi Mail_"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowEmailForm(false)}
+                      className="text-[10px] font-black uppercase text-primario-cerebro/40 hover:text-primario-cerebro transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                  </form>
+                )}
+              </div>
             </div>
+
+            <Link
+              href="/recursos"
+              className="group flex items-center gap-4 text-primario-cerebro/40 hover:text-primario-cerebro transition-all"
+            >
+              <span className="text-2xl transition-transform group-hover:-translate-x-2">
+                ←
+              </span>
+              <span className="text-[10px] font-black uppercase tracking-widest">
+                Volver a la biblioteca
+              </span>
+            </Link>
           </div>
         </div>
       </div>

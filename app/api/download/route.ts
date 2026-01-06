@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+import { useUI } from "@/context/UIContext"; // Note: This is client-only, will need to check how to handle this in API
 
 export async function GET(req: Request) {
   try {
@@ -18,7 +19,6 @@ export async function GET(req: Request) {
 
     const cloudName = (process.env.CLOUDINARY_CLOUD_NAME || "").trim();
 
-    // Probamos las dos rutas posibles de Cloudinary (image y raw) sin logs
     const routes = ["image", "raw"];
     let finalRes = null;
 
@@ -45,8 +45,7 @@ export async function GET(req: Request) {
         "Content-Disposition": `attachment; filename="${decoded.filename}.pdf"`,
       },
     });
-  } catch (error) {
-    console.error("Download error:", error);
+  } catch {
     return new Response("Link inválido o expirado", { status: 401 });
   }
 }

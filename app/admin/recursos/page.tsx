@@ -6,8 +6,10 @@ import ResourceForm from "@/components/admin/ResourceForm";
 import { RecursoPDFSerializado } from "@/types/firebase-types";
 import AdminGuard from "@/components/admin/AdminGuard";
 import { auth } from "@/lib/firebase/firebase";
+import { useUI } from "@/context/UIContext";
 
 export default function AdminRecursosPage() {
+  const { showToast, confirm } = useUI();
   const [showForm, setShowForm] = useState(false);
   const [editingResource, setEditingResource] = useState<
     RecursoPDFSerializado | undefined
@@ -21,8 +23,8 @@ export default function AdminRecursosPage() {
       const res = await fetch("/api/admin/recursos");
       const data = await res.json();
       setRecursos(data);
-    } catch (error) {
-      console.error(error);
+    } catch {
+      showToast("Error al cargar materiales", "error");
     } finally {
       setLoading(false);
     }
@@ -39,19 +41,28 @@ export default function AdminRecursosPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("¿Seguro que querés eliminar este recurso?")) return;
-    try {
-      const idToken = await auth.currentUser?.getIdToken();
-      const res = await fetch(`/api/admin/recursos?id=${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-        },
-      });
-      if (res.ok) fetchRecursos();
-    } catch (error) {
-      console.error(error);
-    }
+    confirm({
+      title: "¿Eliminar material?",
+      message: "Esta acción quitará el recurso de la biblioteca pública.",
+      type: "danger",
+      onConfirm: async () => {
+        try {
+          const idToken = await auth.currentUser?.getIdToken();
+          const res = await fetch(`/api/admin/recursos?id=${id}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${idToken}`,
+            },
+          });
+          if (res.ok) {
+            showToast("Recurso eliminado", "success");
+            fetchRecursos();
+          }
+        } catch {
+          showToast("Error al eliminar", "error");
+        }
+      },
+    });
   };
 
   const [openMenu, setOpenMenu] = useState<string | null>(null);

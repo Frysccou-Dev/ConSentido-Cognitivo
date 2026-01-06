@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { RecursoPDFSerializado } from "@/types/firebase-types";
 import { auth } from "@/lib/firebase/firebase";
+import { useUI } from "@/context/UIContext";
 
 interface ResourceFormProps {
   onSuccess: () => void;
@@ -13,6 +14,7 @@ export default function ResourceForm({
   onSuccess,
   initialData,
 }: ResourceFormProps) {
+  const { showToast } = useUI();
   const [loading, setLoading] = useState(false);
   const [uploadingStates, setUploadingStates] = useState({
     image: false,
@@ -94,9 +96,13 @@ export default function ResourceForm({
           ...prev,
           [type === "image" ? "urlImagen" : "urlArchivo"]: data.secure_url,
         }));
+        showToast(
+          `${type === "image" ? "Imagen" : "PDF"} subido con éxito`,
+          "success"
+        );
       }
-    } catch (error) {
-      console.error("Upload failed", error);
+    } catch {
+      showToast(`Error al subir ${type}`, "error");
     } finally {
       setUploadingStates((prev) => ({
         ...prev,
@@ -125,10 +131,14 @@ export default function ResourceForm({
       });
 
       if (res.ok) {
+        showToast(
+          initialData ? "Recurso actualizado" : "Recurso creado con éxito",
+          "success"
+        );
         onSuccess();
       }
-    } catch (error) {
-      console.error("Save failed", error);
+    } catch {
+      showToast("Error al guardar el recurso", "error");
     } finally {
       setLoading(false);
     }

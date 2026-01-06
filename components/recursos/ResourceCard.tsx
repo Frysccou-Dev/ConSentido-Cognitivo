@@ -1,12 +1,31 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { RecursoPDFSerializado } from "@/types/firebase-types";
+import { useCart } from "@/context/CartContext";
+import { useUI } from "@/context/UIContext";
 
 interface ResourceCardProps {
   recurso: RecursoPDFSerializado;
 }
 
 export default function ResourceCard({ recurso }: ResourceCardProps) {
+  const { addToCart, items } = useCart();
+  const { showToast } = useUI();
+
+  const isInCart = items.some((i) => i.id === recurso.id);
+
+  const handleQuickAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isInCart) {
+      showToast("Ya está en el carrito", "info");
+      return;
+    }
+    addToCart(recurso);
+    showToast("Agregado al carrito", "success");
+  };
+
   return (
     <div className="relative group bg-white rounded-tr-[100px] rounded-bl-[100px] border-2 border-primario-cerebro/10 p-1 flex flex-col h-full shadow-[20px_20px_0px_0px_rgba(75,103,62,0.05)]">
       <div className="relative aspect-square overflow-hidden rounded-tr-[90px] rounded-bl-[60px] bg-fondo m-2">
@@ -17,6 +36,36 @@ export default function ResourceCard({ recurso }: ResourceCardProps) {
           className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
         />
         <div className="absolute inset-0 bg-primario-cerebro/10 mix-blend-multiply"></div>
+
+        {recurso.precio > 0 && (
+          <button
+            onClick={handleQuickAdd}
+            className={`absolute bottom-6 right-6 w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl transition-all active:scale-95 z-10 ${
+              isInCart
+                ? "bg-green-500 text-white"
+                : "bg-white text-primario-cerebro hover:bg-primario-cerebro hover:text-white"
+            }`}
+            title={isInCart ? "En el carrito" : "Añadir al carrito"}
+          >
+            {isInCart ? (
+              <span className="text-xl font-bold">✓</span>
+            ) : (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2.5"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            )}
+          </button>
+        )}
       </div>
 
       <div className="p-8 flex flex-col grow gap-6 relative">
