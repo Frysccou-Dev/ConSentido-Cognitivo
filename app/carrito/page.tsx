@@ -212,9 +212,9 @@ export default function CarritoPage() {
             {cartItems.map((item) => (
               <div
                 key={item.id}
-                className="bg-white p-6 rounded-[30px] border-2 border-anillo-claro/10 flex items-center gap-6 shadow-sm group"
+                className="bg-white p-4 md:p-6 rounded-[30px] border-2 border-anillo-claro/10 flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6 shadow-sm group relative"
               >
-                <div className="relative w-24 h-24 rounded-2xl overflow-hidden shrink-0 bg-fondo">
+                <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden shrink-0 bg-fondo">
                   <Image
                     src={item.urlImagen}
                     alt={item.titulo}
@@ -222,23 +222,37 @@ export default function CarritoPage() {
                     className="object-cover"
                   />
                 </div>
-                <div className="grow">
-                  <h3 className="font-black text-xl text-primario-cerebro uppercase leading-none tracking-tight mb-2">
+                <div className="grow min-w-0 pr-12 sm:pr-0">
+                  <h3 className="font-black text-lg md:text-xl text-primario-cerebro uppercase leading-tight tracking-tight mb-1 md:mb-2 truncate sm:whitespace-normal">
                     {item.titulo}
                   </h3>
-                  <p className="text-sm text-texto-secundario font-medium opacity-60">
+                  <p className="text-xs md:text-sm text-texto-secundario font-medium opacity-60">
                     Formato PDF Digital
                   </p>
                 </div>
-                <div className="text-right flex flex-col gap-2">
+                <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto mt-2 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-anillo-claro/10">
                   <p className="font-black text-secundario-corazon text-lg">
                     ${item.precio}
                   </p>
                   <button
                     onClick={() => handleRemove(item.id, item.titulo)}
-                    className="text-[10px] font-black uppercase text-red-400 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                    className="text-[10px] font-black uppercase text-red-500/60 hover:text-red-500 p-2 sm:bg-red-50 rounded-lg transition-colors flex items-center gap-1"
                   >
-                    Eliminar
+                    <span className="sm:hidden">Quitar</span>
+                    <span className="hidden sm:inline">Eliminar</span>
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="3"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
                   </button>
                 </div>
               </div>

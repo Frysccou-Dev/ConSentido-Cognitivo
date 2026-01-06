@@ -42,12 +42,13 @@ export async function GET(req: Request) {
     }
 
     const blob = await finalRes.blob();
+    const safeFilename =
+      encodeURIComponent(decoded.filename || "recurso") + ".pdf";
+
     return new NextResponse(blob, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="${
-          decoded.filename || "recurso"
-        }.pdf"`,
+        "Content-Disposition": `attachment; filename*=UTF-8''${safeFilename}`,
       },
     });
   } catch (error) {
