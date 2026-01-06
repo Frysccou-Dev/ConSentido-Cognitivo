@@ -22,20 +22,38 @@ export default function DetalleRecursoClient({
     setError("");
 
     try {
-      const response = await fetch("/api/deliver-resource", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          recursoTitulo: recurso.titulo,
-          urlArchivo: recurso.urlArchivo,
-        }),
-      });
+      if (recurso.precio === 0) {
+        const response = await fetch("/api/deliver-resource", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            recursoTitulo: recurso.titulo,
+            urlArchivo: recurso.urlArchivo,
+          }),
+        });
 
-      if (response.ok) {
-        setSuccess(true);
+        if (response.ok) {
+          setSuccess(true);
+        } else {
+          setError("Error al enviar el material. Reintente por favor.");
+        }
       } else {
-        setError("Error al enviar el material. Reintente por favor.");
+        const response = await fetch("/api/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            resourceId: recurso.id,
+            email,
+          }),
+        });
+
+        const data = await response.json();
+        if (data.init_point) {
+          window.location.href = data.init_point;
+        } else {
+          setError("No pudimos generar el link de pago.");
+        }
       }
     } catch {
       setError("No pudimos conectar con el servidor.");
@@ -133,7 +151,7 @@ export default function DetalleRecursoClient({
                     >
                       {recurso.precio === 0
                         ? "Obtener Material_"
-                        : "Próximamente_"}
+                        : "Comprar ahora_"}
                     </button>
                   ) : (
                     <div className="flex flex-col gap-6 p-8 bg-fondo rounded-[40px] border-2 border-primario-cerebro/5 animate-in slide-in-from-bottom-4 duration-500">
@@ -157,7 +175,11 @@ export default function DetalleRecursoClient({
                             disabled={loading}
                             className="w-full bg-secundario-corazon text-fondo py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg hover:bg-sombra-corazon transition-all disabled:opacity-50"
                           >
-                            {loading ? "Enviando..." : "Confirmar y Descargar_"}
+                            {loading
+                              ? "Procesando..."
+                              : recurso.precio === 0
+                              ? "Confirmar y Descargar_"
+                              : "Ir a pagar_"}
                           </button>
                         </form>
                       </div>
