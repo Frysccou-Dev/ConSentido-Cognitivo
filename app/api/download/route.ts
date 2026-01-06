@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { useUI } from "@/context/UIContext"; // Note: This is client-only, will need to check how to handle this in API
 
 export async function GET(req: Request) {
   try {
@@ -19,33 +18,26 @@ export async function GET(req: Request) {
 
     const cloudName = (process.env.CLOUDINARY_CLOUD_NAME || "").trim();
 
-    const routes = ["image", "raw"];
-    let finalRes = null;
+    const downloadUrl = `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment:${decoded.filename}/${decoded.publicId}.${decoded.extension}`;
 
-    for (const route of routes) {
-      const downloadUrl = `https://res.cloudinary.com/${cloudName}/${route}/upload/fl_attachment:${decoded.filename}/v${decoded.version}/${decoded.publicId}.${decoded.extension}`;
-      const res = await fetch(downloadUrl);
-      if (res.ok) {
-        finalRes = res;
-        break;
-      }
-    }
+    const res = await fetch(downloadUrl);
 
-    if (!finalRes) {
+    if (!res.ok) {
       return new Response(
         "No se pudo localizar el archivo. Contacte a soporte.",
         { status: 404 }
       );
     }
 
-    const blob = await finalRes.blob();
+    const blob = await res.blob();
     return new NextResponse(blob, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${decoded.filename}.pdf"`,
       },
     });
-  } catch {
+  } catch (error) {
+    console.error("Download error:", error);
     return new Response("Link inválido o expirado", { status: 401 });
   }
 }

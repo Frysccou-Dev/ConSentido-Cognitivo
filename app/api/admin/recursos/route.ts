@@ -50,6 +50,7 @@ export async function POST(req: Request) {
     const data = await req.json();
     const docRef = await adminDb.collection("recursos").add({
       ...data,
+      precio: parseInt(data.precio) || 0,
       fechaCreacion: FieldValue.serverTimestamp(),
     });
     revalidatePath("/recursos");
@@ -65,7 +66,11 @@ export async function PUT(req: Request) {
   }
   try {
     const { id, ...data } = await req.json();
-    await adminDb.collection("recursos").doc(id).update(data);
+    const updateData = {
+      ...data,
+      precio: parseInt(data.precio) || 0,
+    };
+    await adminDb.collection("recursos").doc(id).update(updateData);
     revalidatePath("/recursos");
     return NextResponse.json({ success: true });
   } catch {
