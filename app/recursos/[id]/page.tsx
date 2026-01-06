@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import DetalleRecursoClient from "./DetalleRecursoClient";
+
+export const dynamic = "force-dynamic";
 import { db } from "@/lib/firebase/firebase";
 import {
   doc,

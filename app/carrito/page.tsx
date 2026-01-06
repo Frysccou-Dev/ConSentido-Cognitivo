@@ -4,14 +4,72 @@ import { useCart } from "@/context/CartContext";
 import { useUI } from "@/context/UIContext";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import { db } from "@/lib/firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { RecursoPDFSerializado } from "@/types/firebase-types";
 
 export default function CarritoPage() {
-  const { items, removeFromCart, total, clearCart } = useCart();
+  const {
+    items: cartItems,
+    removeFromCart,
+    total,
+    clearCart,
+    addToCart,
+  } = useCart();
   const { showToast, confirm } = useUI();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [syncing, setSyncing] = useState(true);
+
+  // Sincronizar precios con la DB al cargar
+  useEffect(() => {
+    async function syncCart() {
+      const updatedItems: RecursoPDFSerializado[] = [];
+      let changed = false;
+
+      for (const item of cartItems) {
+        try {
+          const docRef = doc(db, "recursos", item.id);
+          const snap = await getDoc(docRef);
+          if (snap.exists() && snap.data().activo) {
+            const freshData = snap.data();
+            if (
+              freshData.precio !== item.precio ||
+              freshData.titulo !== item.titulo
+            ) {
+              changed = true;
+            }
+            updatedItems.push({
+              id: snap.id,
+              ...freshData,
+            } as RecursoPDFSerializado);
+          } else {
+            // Producto ya no existe o no está activo, lo quitamos
+            changed = true;
+          }
+        } catch {
+          updatedItems.push(item);
+        }
+      }
+
+      if (changed) {
+        clearCart();
+        updatedItems.forEach((i) => addToCart(i));
+        showToast("Carrito actualizado con los últimos precios", "info");
+      }
+      setSyncing(false);
+    }
+
+    if (cartItems.length > 0) {
+      syncCart();
+    } else {
+      setSyncing(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -55,7 +113,7 @@ export default function CarritoPage() {
       data.append("file", formData.comprobante);
       data.append(
         "items",
-        JSON.stringify(items.map((i) => ({ id: i.id, titulo: i.titulo })))
+        JSON.stringify(cartItems.map((i) => ({ id: i.id, titulo: i.titulo })))
       );
       data.append("total", total.toString());
 
@@ -108,7 +166,22 @@ export default function CarritoPage() {
     );
   }
 
-  if (items.length === 0) {
+  if (syncing) {
+    return (
+      <main className="min-h-screen pt-32 pb-20 px-4 bg-fondo text-center">
+        <div className="container mx-auto max-w-md flex flex-col gap-8">
+          <div className="animate-spin text-6xl text-primario-cerebro/20">
+            ⏳
+          </div>
+          <h1 className="text-2xl font-black text-primario-cerebro uppercase opacity-50">
+            Sincronizando carrito_
+          </h1>
+        </div>
+      </main>
+    );
+  }
+
+  if (cartItems.length === 0) {
     return (
       <main className="min-h-screen pt-32 pb-20 px-4 bg-fondo text-center">
         <div className="container mx-auto max-w-md flex flex-col gap-8">
@@ -136,7 +209,7 @@ export default function CarritoPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 flex flex-col gap-6">
-            {items.map((item) => (
+            {cartItems.map((item) => (
               <div
                 key={item.id}
                 className="bg-white p-6 rounded-[30px] border-2 border-anillo-claro/10 flex items-center gap-6 shadow-sm group"

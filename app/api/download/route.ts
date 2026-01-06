@@ -18,26 +18,40 @@ export async function GET(req: Request) {
 
     const cloudName = (process.env.CLOUDINARY_CLOUD_NAME || "").trim();
 
-    const downloadUrl = `https://res.cloudinary.com/${cloudName}/raw/upload/fl_attachment:${decoded.filename}/${decoded.publicId}.${decoded.extension}`;
+    const possibleUrls = [
+      `https://res.cloudinary.com/${cloudName}/raw/upload/v${decoded.version}/${decoded.publicId}.${decoded.extension}`,
+      `https://res.cloudinary.com/${cloudName}/image/upload/v${decoded.version}/${decoded.publicId}.${decoded.extension}`,
+      `https://res.cloudinary.com/${cloudName}/raw/upload/${decoded.publicId}.${decoded.extension}`,
+      `https://res.cloudinary.com/${cloudName}/image/upload/${decoded.publicId}.${decoded.extension}`,
+    ];
 
-    const res = await fetch(downloadUrl);
+    let finalRes = null;
+    for (const url of possibleUrls) {
+      const res = await fetch(url);
+      if (res.ok) {
+        finalRes = res;
+        break;
+      }
+    }
 
-    if (!res.ok) {
+    if (!finalRes) {
       return new Response(
-        "No se pudo localizar el archivo. Contacte a soporte.",
+        "No se pudo localizar el archivo en la nube. Contacte a soporte.",
         { status: 404 }
       );
     }
 
-    const blob = await res.blob();
+    const blob = await finalRes.blob();
     return new NextResponse(blob, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="${decoded.filename}.pdf"`,
+        "Content-Disposition": `attachment; filename="${
+          decoded.filename || "recurso"
+        }.pdf"`,
       },
     });
   } catch (error) {
-    console.error("Download error:", error);
+    console.error("Download Error:", error);
     return new Response("Link inválido o expirado", { status: 401 });
   }
 }

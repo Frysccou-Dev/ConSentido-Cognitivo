@@ -53,7 +53,7 @@ export async function POST(req: Request) {
       precio: parseInt(data.precio) || 0,
       fechaCreacion: FieldValue.serverTimestamp(),
     });
-    revalidatePath("/recursos");
+    revalidatePath("/", "layout");
     return NextResponse.json({ id: docRef.id });
   } catch {
     return NextResponse.json({ error: "Error al crear" }, { status: 500 });
@@ -71,7 +71,7 @@ export async function PUT(req: Request) {
       precio: parseInt(data.precio) || 0,
     };
     await adminDb.collection("recursos").doc(id).update(updateData);
-    revalidatePath("/recursos");
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Error al actualizar" }, { status: 500 });

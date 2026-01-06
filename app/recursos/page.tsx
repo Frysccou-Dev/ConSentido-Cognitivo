@@ -1,4 +1,5 @@
 import ResourceCard from "@/components/recursos/ResourceCard";
+export const dynamic = "force-dynamic";
 import { db } from "@/lib/firebase/firebase";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { RecursoPDFSerializado } from "@/types/firebase-types";
