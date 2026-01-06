@@ -41,6 +41,7 @@ export async function POST(req: Request) {
         payer: {
           email: email,
         },
+        external_reference: JSON.stringify({ resourceId, email }),
         back_urls: {
           success: `${req.headers.get("origin")}/recursos?status=success`,
           failure: `${req.headers.get("origin")}/recursos?status=failure`,

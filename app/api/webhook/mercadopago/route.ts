@@ -24,40 +24,61 @@ export async function POST(req: Request) {
         const check = hmac.digest("hex");
 
         if (check !== v1) {
+          console.error("MP Webhook: Invalid Signature");
           return new Response("Invalid Signature", { status: 401 });
         }
       }
     }
 
     const { searchParams } = new URL(req.url);
-    const type = searchParams.get("type");
-    const dataId = searchParams.get("data.id") || searchParams.get("id");
+    let type = searchParams.get("type");
+    let dataId = searchParams.get("data.id") || searchParams.get("id");
+
+    if (!type || !dataId) {
+      const body = await req.json().catch(() => ({}));
+      type = type || body.type;
+      dataId = dataId || (body.data && body.data.id) || body.id;
+    }
 
     if (type === "payment" && dataId) {
       const payment = new Payment(client);
       const paymentData = await payment.get({ id: dataId });
 
       if (paymentData.status === "approved") {
-        const { resource_id, payer_email } = paymentData.metadata;
+        let resourceId = paymentData.metadata?.resource_id;
+        let payerEmail = paymentData.metadata?.payer_email;
 
-        const doc = await adminDb.collection("recursos").doc(resource_id).get();
-        if (doc.exists) {
-          const recurso = doc.data();
+        if (!resourceId && paymentData.external_reference) {
+          try {
+            const ext = JSON.parse(paymentData.external_reference);
+            resourceId = ext.resourceId;
+            payerEmail = ext.email;
+          } catch {
+            console.error("MP Webhook: Fail parsing external_reference");
+          }
+        }
 
-          await fetch(
-            `${(
+        if (resourceId && payerEmail) {
+          const doc = await adminDb
+            .collection("recursos")
+            .doc(resourceId)
+            .get();
+          if (doc.exists) {
+            const recurso = doc.data();
+            const baseUrl = (
               process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-            ).replace(/\/$/, "")}/api/deliver-resource`,
-            {
+            ).replace(/\/$/, "");
+
+            await fetch(`${baseUrl}/api/deliver-resource`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                email: payer_email,
+                email: payerEmail,
                 recursoTitulo: recurso?.titulo,
                 urlArchivo: recurso?.urlArchivo,
               }),
-            }
-          );
+            });
+          }
         }
       }
     }
@@ -65,6 +86,6 @@ export async function POST(req: Request) {
     return new Response("OK", { status: 200 });
   } catch (error) {
     console.error("Webhook error:", error);
-    return new Response("Error", { status: 500 });
+    return new Response("OK", { status: 200 });
   }
 }
