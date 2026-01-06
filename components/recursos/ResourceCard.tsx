@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { RecursoPDFSerializado } from "@/types/firebase-types";
 import { useState } from "react";
