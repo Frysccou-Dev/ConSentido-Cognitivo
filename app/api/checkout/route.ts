@@ -46,6 +46,11 @@ export async function POST(req: Request) {
           failure: `${req.headers.get("origin")}/recursos?status=failure`,
           pending: `${req.headers.get("origin")}/recursos?status=pending`,
         },
+        payment_methods: {
+          excluded_payment_methods: [],
+          excluded_payment_types: [],
+          installments: 12,
+        },
         auto_return: "approved",
         metadata: {
           resource_id: resourceId,
