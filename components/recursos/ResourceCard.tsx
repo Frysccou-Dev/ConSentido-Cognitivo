@@ -1,12 +1,60 @@
-import Link from "next/link";
 import Image from "next/image";
 import { RecursoPDFSerializado } from "@/types/firebase-types";
+import { useState } from "react";
 
 interface ResourceCardProps {
   recurso: RecursoPDFSerializado;
 }
 
 export default function ResourceCard({ recurso }: ResourceCardProps) {
+  const [loading, setLoading] = useState(false);
+  const [showEmailInput, setShowEmailInput] = useState(false);
+  const [email, setEmail] = useState("");
+
+  const handleAction = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+
+    if (!email) {
+      setShowEmailInput(true);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (recurso.precio === 0) {
+        const res = await fetch("/api/deliver-resource", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: email,
+            recursoTitulo: recurso.titulo,
+            urlArchivo: recurso.urlArchivo,
+          }),
+        });
+        if (res.ok)
+          alert("¡Te enviamos el material por mail! Revisá tu casilla.");
+      } else {
+        const res = await fetch("/api/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            resourceId: recurso.id,
+            email: email,
+          }),
+        });
+        const data = await res.json();
+        if (data.init_point) {
+          window.location.href = data.init_point;
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un error. Intentá de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="relative group bg-white rounded-tr-[100px] rounded-bl-[100px] border-2 border-primario-cerebro/10 p-1 flex flex-col h-full shadow-[20px_20px_0px_0px_rgba(75,103,62,0.05)]">
       <div className="relative aspect-square overflow-hidden rounded-tr-[90px] rounded-bl-[60px] bg-fondo m-2">
@@ -49,14 +97,46 @@ export default function ResourceCard({ recurso }: ResourceCardProps) {
           </p>
         </div>
 
-        <div className="mt-auto pt-6">
-          <Link
-            href={`/recursos/${recurso.id}`}
-            className="group/btn relative inline-flex items-center justify-center px-8 py-4 font-black text-primario-cerebro uppercase tracking-widest overflow-hidden border-2 border-primario-cerebro transition-all duration-300 rounded-lg hover:text-white"
-          >
-            <span className="absolute inset-0 w-0 bg-primario-cerebro transition-all duration-300 ease-out group-hover/btn:w-full"></span>
-            <span className="relative">Obtener Material_</span>
-          </Link>
+        <div className="mt-auto pt-6 flex flex-col gap-4">
+          {showEmailInput ? (
+            <form
+              onSubmit={handleAction}
+              className="flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-2"
+            >
+              <input
+                type="email"
+                required
+                placeholder="Ingresá tu email..."
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-fondo/50 border-2 border-anillo-claro/10 rounded-xl px-4 py-3 outline-none focus:border-primario-cerebro font-bold text-sm"
+              />
+              <button
+                disabled={loading}
+                className="w-full bg-primario-cerebro text-white font-black uppercase tracking-widest py-3 rounded-lg hover:bg-anillo-oscuro transition-all disabled:opacity-50 text-xs"
+              >
+                {loading ? "Procesando..." : "Confirmar_"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowEmailInput(false)}
+                className="text-[10px] font-bold text-primario-cerebro/40 uppercase tracking-widest hover:text-primario-cerebro"
+              >
+                Cancelar
+              </button>
+            </form>
+          ) : (
+            <button
+              onClick={() => handleAction()}
+              disabled={loading}
+              className="group/btn relative inline-flex items-center justify-center px-8 py-4 font-black text-primario-cerebro uppercase tracking-widest overflow-hidden border-2 border-primario-cerebro transition-all duration-300 rounded-lg hover:text-white disabled:opacity-50"
+            >
+              <span className="absolute inset-0 w-0 bg-primario-cerebro transition-all duration-300 ease-out group-hover/btn:w-full"></span>
+              <span className="relative">
+                {loading ? "Cargando..." : "Obtener Material_"}
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
